@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container my-5">
+    <h1><i class="fas fa-tachometer-alt"></i> Dashboard</h1>
+    
+    <div class="row g-4 mb-4">
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <i class="fas fa-eye fa-3x text-primary mb-3"></i>
+                    <h5>{{ recent_views.count }}</h5>
+                    <p>Προβολές</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <i class="fas fa-heart fa-3x text-danger mb-3"></i>
+                    <h5>{{ wishlist.count }}</h5>
+                    <p>Αγαπημένα</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <i class="fas fa-star fa-3x text-warning mb-3"></i>
+                    <h5>{{ recent_ratings.count }}</h5>
+                    <p>Αξιολογήσεις</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <i class="fas fa-shopping-bag fa-3x text-success mb-3"></i>
+                    <h5>{{ recent_orders.count }}</h5>
+                    <p>Παραγγελίες</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5><i class="fas fa-history"></i> Πρόσφατες Προβολές</h5>
+                    {% for view in recent_views %}
+                    <p>{{ view.product.name }} - {{ view.viewed_at|timesince }} πριν</p>
+                    {% empty %}
+                    <p class="text-muted">Καμία προβολή ακόμα</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5><i class="fas fa-box"></i> Παραγγελίες</h5>
+                    {% for order in recent_orders %}
+                    <p>#{{ order.id }} - €{{ order.total }} - {{ order.get_status_display }}</p>
+                    {% empty %}
+                    <p class="text-muted">Δεν έχετε παραγγελίες</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

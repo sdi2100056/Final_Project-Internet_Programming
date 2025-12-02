@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container my-5">
+    <div class="row">
+        <div class="col-md-6">
+            {% if product.image_url %}
+            <img src="{{ product.image_url }}" class="img-fluid rounded" alt="{{ product.name }}">
+            {% endif %}
+        </div>
+        <div class="col-md-6">
+            <h1>{{ product.name }}</h1>
+            <h2 class="text-success">€{{ product.price }}</h2>
+            <p>{{ product.description }}</p>
+            <p><strong>Κατηγορία:</strong> {{ product.category.name }}<br>
+            <strong>Μέγεθος:</strong> {{ product.get_size_display }}<br>
+            <strong>Χρώμα:</strong> {{ product.color }}</p>
+            
+            {% if user.is_authenticated %}
+            <button class="btn btn-pao btn-lg" onclick="addToCart({{ product.id }})">
+                <i class="fas fa-shopping-cart"></i> Προσθήκη στο Καλάθι
+            </button>
+            {% else %}
+            <a href="{% url 'login' %}" class="btn btn-pao btn-lg">Συνδεθείτε για αγορά</a>
+            {% endif %}
+        </div>
+    </div>
+    
+    <div class="mt-5">
+        <h3>Αξιολογήσεις</h3>
+        {% if user.is_authenticated %}
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5>Αξιολογήστε το προϊόν</h5>
+                <div id="star-rating">
+                    {% for i in "12345" %}
+                    <i class="far fa-star fa-2x clickable-star" data-rating="{{ i }}" style="cursor:pointer;color:#ffc107;"></i>
+                    {% endfor %}
+                </div>
+                <input type="hidden" id="rating-value" value="0">
+                <textarea id="review-text" class="form-control mt-3" rows="3" placeholder="Κριτική..."></textarea>
+                <button class="btn btn-pao mt-2" onclick="submitRating({{ product.id }})">Υποβολή</button>
+            </div>
+        </div>
+        {% endif %}
+        
+        {% for rating in ratings %}
+        <div class="card mb-3">
+            <div class="card-body">
+                <h6>{{ rating.user.username }}</h6>
+                <div>{% for i in "12345" %}{% if i|add:"0" <= rating.rating %}<i class="fas fa-star" style="color:#ffc107;"></i>{% else %}<i class="far fa-star"></i>{% endif %}{% endfor %}</div>
+                <p>{{ rating.review }}</p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<script>
+document.querySelectorAll('.clickable-star').forEach(star => {
+    star.addEventListener('click', function() {
+        const rating = this.getAttribute('data-rating');
+        document.getElementById('rating-value').value = rating;
+        document.querySelectorAll('.clickable-star').forEach((s, index) => {
+            if (index < rating) { s.classList.remove('far'); s.classList.add('fas'); }
+            else { s.classList.remove('fas'); s.classList.add('far'); }
+        });
+    });
+});
+
+function submitRating(productId) {
+    const rating = document.getElementById('rating-value').value;
+    const review = document.getElementById('review-text').value;
+    if (rating === '0') { alert('Επιλέξτε βαθμολογία!'); return; }
+    $.post(`/rating/add/${productId}/`, { rating: rating, review: review }, function(data) {
+        if (data.success) { alert(data.message); location.reload(); }
+    });
+}
+
+function addToCart(productId) {
+    $.post(`/cart/add/${productId}/`, function(data) {
+        if (data.success) alert(data.message);
+    });
+}
+</script>
+{% endblock %}

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Παναθηναϊκός Fan Shop{% endblock %}</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root { --pao-green: #00a550; --pao-dark-green: #007a3d; }
+        body { min-height: 100vh; display: flex; flex-direction: column; }
+        .navbar { background: linear-gradient(135deg, var(--pao-green), var(--pao-dark-green)); }
+        .navbar-brand { font-weight: bold; font-size: 1.5rem; color: white !important; }
+        .nav-link { color: rgba(255,255,255,0.9) !important; }
+        .btn-pao { background-color: var(--pao-green); border-color: var(--pao-green); color: white; }
+        .btn-pao:hover { background-color: var(--pao-dark-green); }
+        .product-card { transition: transform 0.3s; }
+        .product-card:hover { transform: translateY(-5px); }
+        footer { margin-top: auto; background: linear-gradient(135deg, var(--pao-dark-green), var(--pao-green)); color: white; padding: 2rem 0; }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'home' %}"><i class="fas fa-clover"></i> Παναθηναϊκός Fan Shop</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item"><a class="nav-link" href="{% url 'home' %}">Αρχική</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'product_list' %}">Προϊόντα</a></li>
+                </ul>
+                <ul class="navbar-nav">
+                    {% if user.is_authenticated %}
+                        <li class="nav-item"><a class="nav-link" href="{% url 'cart' %}"><i class="fas fa-shopping-cart"></i> Καλάθι</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'dashboard' %}"><i class="fas fa-user-circle"></i> Dashboard</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'profile' %}">Προφίλ</a></li>
+                        {% if user.is_staff %}<li class="nav-item"><a class="nav-link" href="/admin/">Admin</a></li>{% endif %}
+                        <li class="nav-item"><a class="nav-link" href="{% url 'logout' %}">Αποσύνδεση</a></li>
+                    {% else %}
+                        <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">Σύνδεση</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'register' %}">Εγγραφή</a></li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    {% if messages %}
+    <div class="container mt-3">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <main>{% block content %}{% endblock %}</main>
+
+    <footer>
+        <div class="container text-center">
+            <p>&copy; 2024 Παναθηναϊκός Fan Shop</p>
+        </div>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+        const csrftoken = getCookie('csrftoken');
+        $.ajaxSetup({
+            beforeSend: function(xhr, settings) {
+                if (!(/^http:.*/.test(settings.url) || /^https:.*/.test(settings.url))) {
+                    xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                }
+            }
+        });
+    </script>
+</body>
+</html>

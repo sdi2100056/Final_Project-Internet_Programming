@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container my-5">
+    <h1><i class="fas fa-shopping-cart"></i> Το Καλάθι μου</h1>
+    {% if cart.items.all %}
+    <div class="row">
+        <div class="col-md-8">
+            {% for item in cart.items.all %}
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h5>{{ item.product.name }}</h5>
+                    <p>Ποσότητα: {{ item.quantity }} | €{{ item.product.price }} × {{ item.quantity }} = €{{ item.get_subtotal }}</p>
+                    <button class="btn btn-danger btn-sm" onclick="removeFromCart({{ item.id }})"><i class="fas fa-trash"></i> Αφαίρεση</button>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5>Σύνοψη</h5>
+                    <p>Προϊόντα: {{ cart.get_items_count }}</p>
+                    <h4>Σύνολο: €{{ cart.get_total }}</h4>
+                    <a href="{% url 'checkout' %}" class="btn btn-pao w-100">Ολοκλήρωση</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="alert alert-info">Το καλάθι είναι άδειο!</div>
+    {% endif %}
+</div>
+
+<script>
+function removeFromCart(itemId) {
+    if (confirm('Αφαίρεση προϊόντος;')) {
+        $.post(`/cart/remove/${itemId}/`, function(data) {
+            if (data.success) location.reload();
+        });
+    }
+}
+</script>
+{% endblock %}

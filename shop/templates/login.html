@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-5">
+            <div class="card">
+                <div class="card-body">
+                    <h2 class="text-center"><i class="fas fa-sign-in-alt"></i> Σύνδεση</h2>
+                    <form method="POST">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label>Όνομα Χρήστη</label>
+                            <input type="text" class="form-control" name="username" required>
+                        </div>
+                        <div class="mb-3">
+                            <label>Κωδικός</label>
+                            <input type="password" class="form-control" name="password" required>
+                        </div>
+                        <button type="submit" class="btn btn-pao w-100">Σύνδεση</button>
+                    </form>
+                    <hr>
+                    <p class="text-center">Νέος χρήστης; <a href="{% url 'register' %}">Εγγραφή</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
