@@ -1,28 +1,52 @@
 {% extends 'base.html' %}
+{% load static %}
+
 {% block content %}
-<div class="container my-5">
-    <div class="row justify-content-center">
-        <div class="col-md-5">
-            <div class="card">
-                <div class="card-body">
-                    <h2 class="text-center"><i class="fas fa-sign-in-alt"></i> Σύνδεση</h2>
-                    <form method="POST">
-                        {% csrf_token %}
-                        <div class="mb-3">
-                            <label>Όνομα Χρήστη</label>
-                            <input type="text" class="form-control" name="username" required>
-                        </div>
-                        <div class="mb-3">
-                            <label>Κωδικός</label>
-                            <input type="password" class="form-control" name="password" required>
-                        </div>
-                        <button type="submit" class="btn btn-pao w-100">Σύνδεση</button>
-                    </form>
-                    <hr>
-                    <p class="text-center">Νέος χρήστης; <a href="{% url 'register' %}">Εγγραφή</a></p>
+<link rel="stylesheet" href="{% static 'css/login.css' %}">
+
+<div class="login-container">
+    <div class="login-card">
+        <div class="login-header">
+            <i class="fas fa-sign-in-alt"></i>
+            <h2>Login</h2>
+        </div>
+        <div class="login-body">
+            <form method="POST">
+                {% csrf_token %}
+
+                <div class="mb-4">
+                    <label class="form-label">
+                        <i class="fas fa-user me-2"></i>User Name
+                    </label>
+                    <div class="input-group-icon">
+                        <input type="text" class="form-control" name="username" placeholder="Enter your username" required autofocus>
+                    </div>
                 </div>
+
+                <div class="mb-4">
+                    <label class="form-label">
+                        <i class="fas fa-lock me-2"></i>Password
+                    </label>
+                    <div class="input-group-icon has-toggle" style="position: relative;">
+                        <input type="password" class="form-control" name="password" id="password" placeholder="Enter the password" required>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-login w-100">
+                    <i class="fas fa-sign-in-alt me-2"></i>Login
+                </button>
+            </form>
+
+            <div class="divider">
+                <span>or</span>
+            </div>
+
+            <div class="register-link">
+                New User; <a href="{% url 'register' %}">Register</a>
             </div>
         </div>
     </div>
 </div>
+
+<script src="{% static 'js/login.js' %}"></script>
 {% endblock %}

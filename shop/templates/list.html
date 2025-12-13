@@ -1,17 +1,17 @@
 {% extends 'base.html' %}
 {% block content %}
 <div class="container my-5">
-    <h1><i class="fas fa-shopping-bag"></i> Προϊόντα</h1>
+    <h1><i class="fas fa-shopping-bag"></i> Products</h1>
     
     <div class="card mb-4">
         <div class="card-body">
             <form method="GET">
                 <div class="row g-3">
-                    <div class="col-md-3"><input type="text" name="search" class="form-control" placeholder="Αναζήτηση..." value="{{ search_query }}"></div>
-                    <div class="col-md-2"><select name="category" class="form-control"><option value="">Όλες</option>{% for cat in categories %}<option value="{{ cat.id }}">{{ cat.name }}</option>{% endfor %}</select></div>
-                    <div class="col-md-2"><input type="number" name="min_price" class="form-control" placeholder="Από €"></div>
-                    <div class="col-md-2"><input type="number" name="max_price" class="form-control" placeholder="Έως €"></div>
-                    <div class="col-md-2"><button type="submit" class="btn btn-pao w-100"><i class="fas fa-search"></i> Αναζήτηση</button></div>
+                    <div class="col-md-3"><input type="text" name="search" class="form-control" placeholder="Search..." value="{{ search_query }}"></div>
+                    <div class="col-md-2"><select name="category" class="form-control"><option value="">All</option>{% for cat in categories %}<option value="{{ cat.id }}">{{ cat.name }}</option>{% endfor %}</select></div>
+                    <div class="col-md-2"><input type="number" name="min_price" class="form-control" placeholder="From €"></div>
+                    <div class="col-md-2"><input type="number" name="max_price" class="form-control" placeholder="to €"></div>
+                    <div class="col-md-2"><button type="submit" class="btn btn-pao w-100"><i class="fas fa-search"></i> Search</button></div>
                 </div>
             </form>
         </div>
@@ -27,12 +27,12 @@
                 <div class="card-body">
                     <h5>{{ product.name }}</h5>
                     <p class="text-success">€{{ product.price }}</p>
-                    <a href="{% url 'product_detail' product.slug %}" class="btn btn-pao">Προβολή</a>
+                    <a href="{% url 'product_detail' product.slug %}" class="btn btn-pao">Show</a>
                 </div>
             </div>
         </div>
         {% empty %}
-        <div class="col-12"><div class="alert alert-warning">Δεν βρέθηκαν προϊόντα.</div></div>
+        <div class="col-12"><div class="alert alert-warning">No products found.</div></div>
         {% endfor %}
     </div>
 
@@ -40,11 +40,11 @@
     <nav class="mt-4">
         <ul class="pagination">
             {% if page_obj.has_previous %}
-            <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}">Προηγούμενη</a></li>
+            <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a></li>
             {% endif %}
             <li class="page-item active"><span class="page-link">{{ page_obj.number }}</span></li>
             {% if page_obj.has_next %}
-            <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">Επόμενη</a></li>
+            <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a></li>
             {% endif %}
         </ul>
     </nav>

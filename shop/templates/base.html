@@ -1,46 +1,75 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="el">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Παναθηναϊκός Fan Shop{% endblock %}</title>
+    <title>{% block title %}Panathinaikos E-Shop{% endblock %}</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <style>
-        :root { --pao-green: #00a550; --pao-dark-green: #007a3d; }
-        body { min-height: 100vh; display: flex; flex-direction: column; }
-        .navbar { background: linear-gradient(135deg, var(--pao-green), var(--pao-dark-green)); }
-        .navbar-brand { font-weight: bold; font-size: 1.5rem; color: white !important; }
-        .nav-link { color: rgba(255,255,255,0.9) !important; }
-        .btn-pao { background-color: var(--pao-green); border-color: var(--pao-green); color: white; }
-        .btn-pao:hover { background-color: var(--pao-dark-green); }
-        .product-card { transition: transform 0.3s; }
-        .product-card:hover { transform: translateY(-5px); }
-        footer { margin-top: auto; background: linear-gradient(135deg, var(--pao-dark-green), var(--pao-green)); color: white; padding: 2rem 0; }
-    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark">
         <div class="container">
-            <a class="navbar-brand" href="{% url 'home' %}"><i class="fas fa-clover"></i> Παναθηναϊκός Fan Shop</a>
+            <a class="navbar-brand" href="{% url 'home' %}">
+                Panathinaikos E-Shop
+            </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav me-auto">
-                    <li class="nav-item"><a class="nav-link" href="{% url 'home' %}">Αρχική</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{% url 'product_list' %}">Προϊόντα</a></li>
-                </ul>
-                <ul class="navbar-nav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'home' %}">
+                            <i class="fas fa-home me-1"></i>Home
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'product_list' %}">
+                            <i class="fas fa-shopping-bag me-1"></i>Products
+                        </a>
+                    </li>
                     {% if user.is_authenticated %}
-                        <li class="nav-item"><a class="nav-link" href="{% url 'cart' %}"><i class="fas fa-shopping-cart"></i> Καλάθι</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{% url 'dashboard' %}"><i class="fas fa-user-circle"></i> Dashboard</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{% url 'profile' %}">Προφίλ</a></li>
-                        {% if user.is_staff %}<li class="nav-item"><a class="nav-link" href="/admin/">Admin</a></li>{% endif %}
-                        <li class="nav-item"><a class="nav-link" href="{% url 'logout' %}">Αποσύνδεση</a></li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'cart' %}">
+                                <i class="fas fa-shopping-cart me-1"></i>Cart
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'dashboard' %}">
+                                <i class="fas fa-tachometer-alt me-1"></i>Dashboard
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'profile' %}">
+                                <i class="fas fa-user me-1"></i>Profile
+                            </a>
+                        </li>
+                        {% if user.is_staff %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="/admin/">
+                                <i class="fas fa-crown me-1"></i>Admin
+                            </a>
+                        </li>
+                        {% endif %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'logout' %}">
+                                <i class="fas fa-sign-out-alt me-1"></i>Logout
+                            </a>
+                        </li>
                     {% else %}
-                        <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">Σύνδεση</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{% url 'register' %}">Εγγραφή</a></li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'login' %}">
+                                <i class="fas fa-sign-in-alt me-1"></i>Login
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'register' %}">
+                                <i class="fas fa-user-plus me-1"></i>Register
+                            </a>
+                        </li>
                     {% endif %}
                 </ul>
             </div>
@@ -51,7 +80,7 @@
     <div class="container mt-3">
         {% for message in messages %}
         <div class="alert alert-{{ message.tags }} alert-dismissible fade show">
-            {{ message }}
+            <strong><i class="fas fa-info-circle me-2"></i></strong> {{ message }}
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
         {% endfor %}
@@ -61,36 +90,36 @@
     <main>{% block content %}{% endblock %}</main>
 
     <footer>
-        <div class="container text-center">
-            <p>&copy; 2024 Παναθηναϊκός Fan Shop</p>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <h5>Panathinaikos E-Shop</h5>
+                    <p>Licensed Products of our team</p>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <h5>Quick Links</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="{% url 'home' %}" class="text-white text-decoration-none">Home</a></li>
+                        <li><a href="{% url 'product_list' %}" class="text-white text-decoration-none">Products</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <h5>Contact</h5>
+                    <p>
+                        <i class="fas fa-envelope me-2"></i>info@paoshop.gr<br>
+                        <i class="fas fa-phone me-2"></i>+30 2114057851
+                    </p>
+                </div>
+            </div>
+            <hr class="bg-white">
+            <p class="text-center mb-0">
+                &copy; 2025 Panathinaikos E-Shop. All Rights Reserved.
+            </p>
         </div>
     </footer>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
-    <script>
-        function getCookie(name) {
-            let cookieValue = null;
-            if (document.cookie && document.cookie !== '') {
-                const cookies = document.cookie.split(';');
-                for (let i = 0; i < cookies.length; i++) {
-                    const cookie = cookies[i].trim();
-                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                        break;
-                    }
-                }
-            }
-            return cookieValue;
-        }
-        const csrftoken = getCookie('csrftoken');
-        $.ajaxSetup({
-            beforeSend: function(xhr, settings) {
-                if (!(/^http:.*/.test(settings.url) || /^https:.*/.test(settings.url))) {
-                    xhr.setRequestHeader("X-CSRFToken", csrftoken);
-                }
-            }
-        });
-    </script>
+    <script src="{% static 'js/base.js' %}"></script>
 </body>
 </html>

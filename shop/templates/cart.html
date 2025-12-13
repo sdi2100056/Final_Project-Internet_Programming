@@ -1,16 +1,20 @@
 {% extends 'base.html' %}
+{% load static %}
+
 {% block content %}
+<link rel="stylesheet" href="{% static 'css/cart.css' %}">
+
 <div class="container my-5">
-    <h1><i class="fas fa-shopping-cart"></i> Το Καλάθι μου</h1>
+    <h1><i class="fas fa-shopping-cart"></i> My Cart</h1>
     {% if cart.items.all %}
     <div class="row">
-        <div class="col-md-8">
+        <div class="col-md-8" id="cart-items">
             {% for item in cart.items.all %}
-            <div class="card mb-3">
+            <div class="card mb-3" id="item-{{ item.id }}">
                 <div class="card-body">
                     <h5>{{ item.product.name }}</h5>
-                    <p>Ποσότητα: {{ item.quantity }} | €{{ item.product.price }} × {{ item.quantity }} = €{{ item.get_subtotal }}</p>
-                    <button class="btn btn-danger btn-sm" onclick="removeFromCart({{ item.id }})"><i class="fas fa-trash"></i> Αφαίρεση</button>
+                    <p>Quantity: {{ item.quantity }} | €{{ item.product.price }} × {{ item.quantity }} = €<span class="item-subtotal">{{ item.get_subtotal }}</span></p>
+                    <button class="btn btn-danger btn-sm" onclick="removeFromCart({{ item.id }})"><i class="fas fa-trash"></i> Remove</button>
                 </div>
             </div>
             {% endfor %}
@@ -18,26 +22,18 @@
         <div class="col-md-4">
             <div class="card">
                 <div class="card-body">
-                    <h5>Σύνοψη</h5>
-                    <p>Προϊόντα: {{ cart.get_items_count }}</p>
-                    <h4>Σύνολο: €{{ cart.get_total }}</h4>
-                    <a href="{% url 'checkout' %}" class="btn btn-pao w-100">Ολοκλήρωση</a>
+                    <h5>Summary</h5>
+                    <p>Products: <span id="cart-count">{{ cart.get_items_count }}</span></p>
+                    <h4>Total: €<span id="cart-total">{{ cart.get_total }}</span></h4>
+                    <a href="{% url 'checkout' %}" class="btn btn-pao w-100">Complete</a>
                 </div>
             </div>
         </div>
     </div>
     {% else %}
-    <div class="alert alert-info">Το καλάθι είναι άδειο!</div>
+    <div class="alert alert-info">The cart is empty!</div>
     {% endif %}
 </div>
 
-<script>
-function removeFromCart(itemId) {
-    if (confirm('Αφαίρεση προϊόντος;')) {
-        $.post(`/cart/remove/${itemId}/`, function(data) {
-            if (data.success) location.reload();
-        });
-    }
-}
-</script>
+<script src="{% static 'js/cart.js' %}"></script>
 {% endblock %}

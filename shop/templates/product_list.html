@@ -1,0 +1,253 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Products - Panathinaikos Fan Shop{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/product_list.css' %}">
+
+<div class="container my-5">
+    <!-- Page Header -->
+    <div class="text-center mb-5">
+        <h1 class="display-4 fw-bold mb-3">
+            <i class="fas fa-shopping-bag me-3" style="color: var(--pao-green);"></i>
+            All the products
+        </h1>
+        <p class="lead text-muted">Discover our exclusive collection</p>
+    </div>
+
+    <!-- Filters Section -->
+    <div class="filter-section">
+        <form method="GET" action="{% url 'product_list' %}">
+            <div class="row g-3 align-items-end">
+                <!-- Search -->
+                <div class="col-md-4">
+                    <label class="form-label fw-bold">
+                        <i class="fas fa-search me-2"></i>Search
+                    </label>
+                    <input type="text"
+                           name="search"
+                           class="form-control search-input"
+                           placeholder="Search a product..."
+                           value="{{ search_query }}">
+                </div>
+
+                <!-- Category -->
+                <div class="col-md-2">
+                    <label class="form-label fw-bold">
+                        <i class="fas fa-list me-2"></i>Category
+                    </label>
+                    <select name="category" class="form-select filter-select">
+                        <option value="">All</option>
+                        {% for cat in categories %}
+                        <option value="{{ cat.id }}" {% if request.GET.category == cat.id|stringformat:"s" %}selected{% endif %}>
+                            {{ cat.name }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- Price Range -->
+                <div class="col-md-2">
+                    <label class="form-label fw-bold">
+                        <i class="fas fa-euro-sign me-2"></i>From €
+                    </label>
+                    <input type="number"
+                           name="min_price"
+                           class="form-control search-input"
+                           placeholder="0"
+                           value="{{ request.GET.min_price }}">
+                </div>
+
+                <div class="col-md-2">
+                    <label class="form-label fw-bold">To €</label>
+                    <input type="number"
+                           name="max_price"
+                           class="form-control search-input"
+                           placeholder="999"
+                           value="{{ request.GET.max_price }}">
+                </div>
+
+                <!-- Buttons -->
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-pao w-100">
+                        <i class="fas fa-filter me-2"></i>Apply
+                    </button>
+                </div>
+            </div>
+
+            <!-- Additional Filters Row -->
+            <div class="row g-3 mt-2">
+                <div class="col-md-2">
+                    <select name="size" class="form-select filter-select">
+                        <option value="">All the sizes</option>
+                        <option value="XS">XS</option>
+                        <option value="S">S</option>
+                        <option value="M">M</option>
+                        <option value="L">L</option>
+                        <option value="XL">XL</option>
+                        <option value="XXL">XXL</option>
+                    </select>
+                </div>
+
+                <div class="col-md-2">
+                    <select name="type" class="form-select filter-select">
+                        <option value="">All the types</option>
+                        <option value="MEN">Men</option>
+                        <option value="WOMEN">Women</option>
+                        <option value="KIDS">Kids</option>
+                    </select>
+                </div>
+
+                <div class="col-md-2">
+                    <select name="season" class="form-select filter-select">
+                        <option value="">All the seasons</option>
+                        <option value="2024-25">2024-25</option>
+                        <option value="2023-24">2023-24</option>
+                        <option value="RETRO">Retro</option>
+                        <option value="CLASSIC">Classic</option>
+                    </select>
+                </div>
+
+                <div class="col-md-2">
+                    <select name="sort_by" class="form-select filter-select">
+                        <option value="">Sort</option>
+                        <option value="price_asc">Price: Lower → Higher</option>
+                        <option value="price_desc">Price: Higher → Lower</option>
+                        <option value="name_asc">Name: A-Z</option>
+                        <option value="newest">Newest</option>
+                    </select>
+                </div>
+
+                <div class="col-md-4 text-end">
+                    <a href="{% url 'product_list' %}" class="btn btn-outline-secondary">
+                        <i class="fas fa-redo me-2"></i>Filter Cleaning
+                    </a>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- Results Info -->
+    {% if search_query %}
+    <div class="results-info">
+        <i class="fas fa-info-circle me-2"></i>
+        Results for: <strong>"{{ search_query }}"</strong> -
+        Found <strong>{{ page_obj.paginator.count }}</strong> products
+    </div>
+    {% endif %}
+
+    <!-- Products Grid -->
+    <div class="product-grid">
+        {% for product in page_obj %}
+        <div class="product-item">
+            <div class="product-image-wrapper">
+                {% if product.image_url %}
+                <img src="{{ product.image_url }}" class="product-image" alt="{{ product.name }}">
+                {% else %}
+                <div class="product-image d-flex align-items-center justify-content-center">
+                    <i class="fas fa-image fa-4x text-muted"></i>
+                </div>
+                {% endif %}
+                <span class="product-badge">{{ product.get_type_display }}</span>
+            </div>
+
+            <div class="product-body">
+                <div class="product-category">
+                    <i class="fas fa-tag me-1"></i>{{ product.category.name }}
+                </div>
+
+                <h3 class="product-title">{{ product.name }}</h3>
+
+                <p class="product-description">
+                    {{ product.description|truncatewords:15 }}
+                </p>
+
+                <div class="product-meta">
+                    <span class="meta-badge">
+                        <i class="fas fa-ruler me-1"></i>{{ product.get_size_display }}
+                    </span>
+                    <span class="meta-badge">
+                        <i class="fas fa-calendar me-1"></i>{{ product.season }}
+                    </span>
+                    <span class="meta-badge">
+                        <i class="fas fa-palette me-1"></i>{{ product.color }}
+                    </span>
+                </div>
+
+                <div class="product-footer">
+                    <div>
+                        <div class="product-price">
+                            <span class="price-currency">€</span>{{ product.price }}
+                        </div>
+                        <div class="product-rating">
+                            {% for i in "12345" %}
+                                {% if i|add:"0" <= product.average_rating %}
+                                    <i class="fas fa-star"></i>
+                                {% else %}
+                                    <i class="far fa-star"></i>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+
+                <a href="{% url 'product_detail' product.slug %}" class="view-btn">
+                    <i class="fas fa-eye me-2"></i>Show the product
+                </a>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <div class="no-results">
+                <i class="fas fa-search"></i>
+                <h3 class="fw-bold mb-3">No products found</h3>
+                <p class="text-muted mb-4">Try to change the search filters</p>
+                <a href="{% url 'product_list' %}" class="btn btn-pao">
+                    <i class="fas fa-redo me-2"></i>Reset the filters
+                </a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Pagination -->
+    {% if page_obj.has_other_pages %}
+    <nav class="mt-5">
+        <ul class="pagination justify-content-center">
+            {% if page_obj.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page=1{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">
+                    <i class="fas fa-angle-double-left"></i>
+                </a>
+            </li>
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">
+                    <i class="fas fa-angle-left"></i> Previous
+                </a>
+            </li>
+            {% endif %}
+
+            <li class="page-item active">
+                <span class="page-link">
+                    Page {{ page_obj.number }} from {{ page_obj.paginator.num_pages }}
+                </span>
+            </li>
+
+            {% if page_obj.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">
+                    Next <i class="fas fa-angle-right"></i>
+                </a>
+            </li>
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">
+                    <i class="fas fa-angle-double-right"></i>
+                </a>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+</div>
+{% endblock %}

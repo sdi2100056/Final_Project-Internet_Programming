@@ -1,3 +1,7 @@
+"""
+ΟΔΗΓΙΕΣ: Αντικατέστησε ΟΛΟ το περιεχόμενο του shop/models.py με αυτό
+"""
+
 from django.db import models
 from django.contrib.auth.models import User
 from django.core.validators import MinValueValidator, MaxValueValidator
@@ -5,11 +9,11 @@ from django.utils.text import slugify
 
 
 class Category(models.Model):
-    name = models.CharField(max_length=200, unique=True)
-    slug = models.SlugField(max_length=200, unique=True, blank=True)
-    parent = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, related_name='children')
+    """Κατηγορίες προϊόντων (π.χ. Ένδυση, Αξεσουάρ)"""
+    name = models.CharField(max_length=100, unique=True)
+    slug = models.SlugField(max_length=100, unique=True, blank=True)
     description = models.TextField(blank=True)
-    created_at = models.DateTimeField(auto_now_add=True)
+    parent = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, related_name='subcategories')
 
     class Meta:
         verbose_name_plural = "Categories"
@@ -25,45 +29,47 @@ class Category(models.Model):
 
 
 class Product(models.Model):
+    """Προϊόντα του καταστήματος"""
     SIZE_CHOICES = [
         ('XS', 'Extra Small'),
         ('S', 'Small'),
         ('M', 'Medium'),
         ('L', 'Large'),
         ('XL', 'Extra Large'),
-        ('XXL', 'Double Extra Large'),
+        ('XXL', 'XXL'),
+        ('ONE', 'One Size'),
     ]
 
     TYPE_CHOICES = [
-        ('jersey', 'Jersey'),
-        ('training', 'Training'),
-        ('casual', 'Casual'),
-        ('accessories', 'Accessories'),
+        ('MEN', 'Ανδρικά'),
+        ('WOMEN', 'Γυναικεία'),
+        ('KIDS', 'Παιδικά'),
+        ('UNISEX', 'Unisex'),
     ]
 
     SEASON_CHOICES = [
-        ('2023-24', '2023-24'),
         ('2024-25', '2024-25'),
-        ('2025-26', '2025-26'),
+        ('2023-24', '2023-24'),
+        ('RETRO', 'Retro'),
+        ('CLASSIC', 'Classic'),
     ]
 
     name = models.CharField(max_length=200)
     slug = models.SlugField(max_length=200, unique=True, blank=True)
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='products')
     description = models.TextField()
-    price = models.DecimalField(max_digits=10, decimal_places=2)
+    price = models.DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(0)])
     stock = models.PositiveIntegerField(default=0)
-    size = models.CharField(max_length=10, choices=SIZE_CHOICES, blank=True)
-    type = models.CharField(max_length=50, choices=TYPE_CHOICES, default='jersey')
-    season = models.CharField(max_length=20, choices=SEASON_CHOICES, blank=True)
-    brand = models.CharField(max_length=100, blank=True)
-    color = models.CharField(max_length=50, blank=True)
-    image = models.ImageField(upload_to='products/', blank=True, null=True)
-    image_url = models.URLField(max_length=500, blank=True)
-    views = models.PositiveIntegerField(default=0)
+    size = models.CharField(max_length=10, choices=SIZE_CHOICES, default='M')
+    type = models.CharField(max_length=10, choices=TYPE_CHOICES, default='UNISEX')
+    season = models.CharField(max_length=20, choices=SEASON_CHOICES, default='2024-25')
+    brand = models.CharField(max_length=100, default='Παναθηναϊκός')
+    color = models.CharField(max_length=50, default='Πράσινο')
+    image_url = models.URLField(max_length=500, blank=True, null=True, help_text='URL εικόνας από το internet')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     is_active = models.BooleanField(default=True)
+    views = models.PositiveIntegerField(default=0)
 
     class Meta:
         ordering = ['-created_at']
@@ -76,21 +82,34 @@ class Product(models.Model):
     def __str__(self):
         return self.name
 
+    def average_rating(self):
+        """Μέσος όρος rating"""
+        ratings = self.ratings.all()
+        if ratings:
+            return sum([r.rating for r in ratings]) / len(ratings)
+        return 0
+
+    def increment_views(self):
+        """Αύξηση προβολών"""
+        Product.objects.filter(id=self.id).update(views=models.F('views') + 1)
+        self.refresh_from_db()
+
 
 class UserProfile(models.Model):
+    """Προφίλ χρήστη"""
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
     phone = models.CharField(max_length=20, blank=True)
     address = models.TextField(blank=True)
     city = models.CharField(max_length=100, blank=True)
     postal_code = models.CharField(max_length=10, blank=True)
     date_of_birth = models.DateField(null=True, blank=True)
-    created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"{self.user.username}'s Profile"
 
 
 class Rating(models.Model):
+    """Αξιολογήσεις προϊόντων"""
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='ratings')
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     rating = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)])
@@ -102,29 +121,32 @@ class Rating(models.Model):
         ordering = ['-created_at']
 
     def __str__(self):
-        return f"{self.user.username} - {self.product.name} ({self.rating}★)"
+        return f"{self.user.username} - {self.product.name} - {self.rating} stars"
 
 
 class Cart(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='cart')
+    """Καλάθι αγορών"""
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='cart')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f"{self.user.username}'s Cart"
+        return f"Cart {self.id} - {self.user.username}"
 
     def get_total(self):
-        return sum(item.get_subtotal() for item in self.items.all())
+        """Υπολογισμός συνόλου"""
+        return sum([item.get_subtotal() for item in self.items.all()])
 
     def get_items_count(self):
-        return self.items.count()
+        """Πλήθος προϊόντων"""
+        return sum([item.quantity for item in self.items.all()])
 
 
 class CartItem(models.Model):
+    """Προϊόντα στο καλάθι"""
     cart = models.ForeignKey(Cart, on_delete=models.CASCADE, related_name='items')
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField(default=1)
-    added_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         unique_together = ('cart', 'product')
@@ -133,10 +155,12 @@ class CartItem(models.Model):
         return f"{self.quantity}x {self.product.name}"
 
     def get_subtotal(self):
+        """Υποσύνολο"""
         return self.product.price * self.quantity
 
 
 class Wishlist(models.Model):
+    """Λίστα επιθυμιών"""
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='wishlist')
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     added_at = models.DateTimeField(auto_now_add=True)
@@ -150,46 +174,47 @@ class Wishlist(models.Model):
 
 
 class ViewHistory(models.Model):
+    """Ιστορικό προβολών"""
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='view_history')
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     viewed_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         ordering = ['-viewed_at']
-        verbose_name_plural = "View Histories"
 
     def __str__(self):
         return f"{self.user.username} viewed {self.product.name}"
 
 
 class Order(models.Model):
+    """Παραγγελίες"""
     STATUS_CHOICES = [
-        ('pending', 'Pending'),
-        ('processing', 'Processing'),
-        ('shipped', 'Shipped'),
-        ('delivered', 'Delivered'),
-        ('cancelled', 'Cancelled'),
+        ('PENDING', 'Εκκρεμής'),
+        ('PROCESSING', 'Επεξεργασία'),
+        ('SHIPPED', 'Απεστάλη'),
+        ('DELIVERED', 'Παραδόθηκε'),
+        ('CANCELLED', 'Ακυρώθηκε'),
     ]
 
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='orders')
-    total = models.DecimalField(max_digits=10, decimal_places=2)
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
-    shipping_address = models.TextField()
-    phone = models.CharField(max_length=20, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='PENDING')
+    total = models.DecimalField(max_digits=10, decimal_places=2)
+    shipping_address = models.TextField()
 
     class Meta:
         ordering = ['-created_at']
 
     def __str__(self):
-        return f"Order #{self.id} - {self.user.username}"
+        return f"Order {self.id} - {self.user.username}"
 
 
 class OrderItem(models.Model):
+    """Προϊόντα παραγγελίας"""
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='items')
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    quantity = models.PositiveIntegerField()
+    quantity = models.PositiveIntegerField(default=1)
     price = models.DecimalField(max_digits=10, decimal_places=2)
 
     def __str__(self):
