@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'base.html' %}<!--Extends base template and inherits nav bar and footer-->
 {% load static %}
 
 {% block title %}{{ product.name }} - Panathinaikos Fan Shop{% endblock %}
@@ -15,7 +15,7 @@
             <li class="breadcrumb-item active">{{ product.name }}</li>
         </ol>
     </nav>
-
+<!--Main product detail container-->
     <div class="product-detail-container">
         <div class="row">
             <!-- Product Image -->
@@ -40,8 +40,10 @@
                     </span>
                 </div>
 
+            <!--Product Title-->
                 <h1 class="product-title">{{ product.name }}</h1>
 
+            <!--Generates 5 stars, filled based on average rating-->
                 <div class="mb-3">
                     <span class="star-rating h5">
                         {% for i in "12345" %}
@@ -55,8 +57,10 @@
                     <span class="text-muted ms-2">({{ ratings.count }} reviews)</span>
                 </div>
 
+            <!--Product Price-->
                 <div class="product-price">€{{ product.price }}</div>
 
+            <!--Product Details list -->
                 <div class="product-description">
                     <p>{{ product.description }}</p>
                 </div>
@@ -100,6 +104,7 @@
                     {% endif %}
                 </div>
 
+            <!--Add to cart button for logged-in users-->
                 <div class="mt-4">
                     {% if user.is_authenticated %}
                         {% if product.stock > 0 %}
@@ -107,11 +112,13 @@
                             <i class="fas fa-shopping-cart me-2"></i>Add to Cart
                         </button>
                         {% else %}
+                            <!--disabled when out of stock-->
                         <button class="btn btn-secondary btn-lg w-100 mb-3" disabled>
                             <i class="fas fa-times-circle me-2"></i>Out of Stock
                         </button>
                         {% endif %}
                     {% else %}
+                        <!--login prompt for anonymous users-->
                     <a href="{% url 'login' %}?next={% url 'add_to_cart' product.id %}" class="btn btn-pao btn-lg w-100 mb-3">
                         <i class="fas fa-sign-in-alt me-2"></i>Login to Add to Cart
                     </a>
@@ -128,11 +135,13 @@
             Customer Reviews
         </h3>
 
+    <!--Ratings form-->
         {% if user.is_authenticated %}
         <div class="card mb-4">
             <div class="card-body">
                 <h5 class="fw-bold mb-3">Rate this Product</h5>
 
+            <!--Star rating input-->
                 <div class="mb-3">
                     <label class="form-label fw-bold">Rating:</label>
                     <div id="star-rating">
@@ -140,14 +149,17 @@
                         <i class="far fa-star star-input" data-rating="{{ i }}"></i>
                         {% endfor %}
                     </div>
+                <!--Hidden input to store selected rating value-->
                     <input type="hidden" id="rating-value" value="{% if user_rating %}{{ user_rating.rating }}{% else %}0{% endif %}">
                 </div>
 
+            <!--Review text inpur-->
                 <div class="mb-3">
                     <label class="form-label fw-bold">Review (optional):</label>
                     <textarea class="form-control" id="review-text" rows="4" placeholder="Share your experience...">{% if user_rating %}{{ user_rating.review }}{% endif %}</textarea>
                 </div>
 
+            <--Submit button-->
                 <button type="button" class="btn btn-pao" onclick="submitRating({{ product.id }})">
                     <i class="fas fa-paper-plane me-2"></i>Submit Review
                 </button>
@@ -179,13 +191,16 @@
                         {% endfor %}
                     </div>
                 </div>
+            <!--Review date-->
                 <small class="text-muted">{{ rating.created_at|date:"d/m/Y" }}</small>
             </div>
+        <!--Review text if any-->
             {% if rating.review %}
             <p class="mb-0 text-muted">{{ rating.review }}</p>
             {% endif %}
         </div>
         {% empty %}
+            <!--Empty state for no reviews-->
         <p class="text-muted text-center py-4">
             <i class="fas fa-comment-slash fa-3x mb-3 d-block"></i>
             No reviews yet. Be the first to review!

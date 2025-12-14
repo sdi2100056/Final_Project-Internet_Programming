@@ -1,23 +1,25 @@
-/*Main login container*/
-.login-container {
+/* Main Container */
+.register-container {
     min-height: 80vh;
     display: flex;
     align-items: center;
     justify-content: center;
     padding: 2rem 0;
 }
-/*The main visual element*/
-.login-card {
+
+/* Registration Card */
+.register-card {
     background: white;
     border-radius: 30px;
     box-shadow: 0 20px 60px rgba(0, 165, 80, 0.15);
     overflow: hidden;
     border: none;
-    max-width: 480px;
+    max-width: 600px;
     width: 100%;
     animation: fadeInUp 0.6s ease;
 }
-/*Card entrance animation*/
+
+/* Animation for card entrance */
 @keyframes fadeInUp {
     from {
         opacity: 0;
@@ -28,17 +30,19 @@
         transform: translateY(0);
     }
 }
-/*Login Header Section*/
-.login-header {
+
+/* Card header */
+.register-header {
     background: linear-gradient(135deg, var(--pao-green) 0%, var(--pao-dark-green) 100%);
     color: white;
-    padding: 3rem 2rem;
+    padding: 2.5rem 2rem;
     text-align: center;
     position: relative;
     overflow: hidden;
 }
 
-.login-header::before {
+
+.register-header::before {
     content: '';
     position: absolute;
     width: 200px;
@@ -48,8 +52,8 @@
     top: -100px;
     right: -100px;
 }
-/*Header Title Styling*/
-.login-header::after {
+
+.register-header::after {
     content: '';
     position: absolute;
     width: 150px;
@@ -60,29 +64,37 @@
     left: -75px;
 }
 
-.login-header h2 {
-    font-size: 2.5rem;
+/* Header Title */
+.register-header h2 {
+    font-size: 2.2rem;
     font-weight: 700;
     margin: 0;
     position: relative;
     z-index: 1;
 }
 
-.login-header i {
-    font-size: 3rem;
-    margin-bottom: 1rem;
+/* Icon for header */
+.register-header i {
+    font-size: 2.5rem;
+    margin-bottom: 0.8rem;
     display: block;
     animation: bounce 2s infinite;
 }
-/*Bouncing animation for icon*/
+
+/* Animation bounce for icon */
 @keyframes bounce {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-10px); }
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
 }
 
-.login-body {
-    padding: 3rem 2.5rem;
+.register-body {
+    padding: 2.5rem 2.5rem;
 }
+
 
 .form-label {
     font-weight: 600;
@@ -90,8 +102,10 @@
     margin-bottom: 0.5rem;
     font-size: 0.95rem;
 }
-/*Form input field styling*/
-.form-control {
+
+/* Input Fields and Select */
+.form-control,
+.form-select {
     border: 2px solid #e0e0e0;
     border-radius: 15px;
     padding: 0.9rem 1.2rem;
@@ -99,16 +113,20 @@
     transition: all 0.3s ease;
 }
 
-.form-control:focus {
+/* Focus state for fields */
+.form-control:focus,
+.form-select:focus {
     border-color: var(--pao-green);
     box-shadow: 0 0 0 0.2rem rgba(0, 165, 80, 0.15);
     transform: translateY(-2px);
 }
 
+
 .input-group-icon {
     position: relative;
 }
 
+/* Icons inside input fields */
 .input-group-icon i {
     position: absolute;
     left: 1rem;
@@ -119,11 +137,13 @@
     z-index: 10;
 }
 
+/* Padding for inputs  */
 .input-group-icon .form-control {
     padding-left: 3rem;
 }
-/*Login button styling*/
-.btn-login {
+
+/* Registration button */
+.btn-register {
     background: linear-gradient(135deg, var(--pao-green), var(--pao-light-green));
     border: none;
     color: white;
@@ -137,7 +157,8 @@
     overflow: hidden;
 }
 
-.btn-login::before {
+
+.btn-register::before {
     content: '';
     position: absolute;
     top: 0;
@@ -148,21 +169,25 @@
     transition: left 0.5s;
 }
 
-.btn-login:hover::before {
+
+.btn-register:hover::before {
     left: 100%;
 }
 
-.btn-login:hover {
+/* Hover state for button */
+.btn-register:hover {
     transform: translateY(-3px);
     box-shadow: 0 6px 25px rgba(0, 165, 80, 0.6);
     background: linear-gradient(135deg, var(--pao-light-green), var(--pao-green));
 }
 
+
 .divider {
     text-align: center;
-    margin: 2rem 0;
+    margin: 1.5rem 0;
     position: relative;
 }
+
 
 .divider::before {
     content: '';
@@ -181,21 +206,45 @@
     color: #6c757d;
     font-size: 0.9rem;
 }
-/*Register link contianer*/
-.register-link {
+
+/* Link for login */
+.login-link {
     text-align: center;
     font-size: 1rem;
     color: #6c757d;
 }
 
-.register-link a {
+/* Styling for link */
+.login-link a {
     color: var(--pao-green);
     text-decoration: none;
     font-weight: 600;
     transition: all 0.3s ease;
 }
 
-.register-link a:hover {
+/* Hover state for link */
+.login-link a:hover {
     color: var(--pao-dark-green);
     text-decoration: underline;
+}
+
+
+/* Help text */
+.help-text {
+    font-size: 0.85rem;
+    color: #6c757d;
+    margin-top: 0.3rem;
+}
+
+/* Error list */
+.errorlist {
+    list-style: none;
+    padding: 0;
+    margin: 0.5rem 0 0 0;
+}
+
+.errorlist li {
+    color: #dc3545;
+    font-size: 0.85rem;
+    margin-top: 0.25rem;
 }

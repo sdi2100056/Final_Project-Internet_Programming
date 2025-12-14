@@ -1,3 +1,4 @@
+/*Main product detail container*/
 .product-detail-container {
     background: white;
     border-radius: 20px;
@@ -5,14 +6,14 @@
     box-shadow: 0 10px 40px rgba(0,0,0,0.1);
     margin: 3rem 0;
 }
-
+/*Main product image container*/
 .product-image-main {
     border-radius: 20px;
     overflow: hidden;
     box-shadow: 0 10px 30px rgba(0,0,0,0.1);
     background: #f8f9fa;
 }
-
+/*Product image styling*/
 .product-image-main img {
     width: 100%;
     height: auto;
@@ -32,14 +33,14 @@
     color: var(--pao-green);
     margin-bottom: 2rem;
 }
-
+/*Individual product info items*/
 .product-info-item {
     padding: 1rem;
     background: #f8f9fa;
     border-radius: 10px;
     margin-bottom: 1rem;
 }
-
+/*Label within product info items*/
 .product-info-label {
     font-weight: 600;
     color: #6c757d;
@@ -59,19 +60,19 @@
     padding: 2rem;
     margin-top: 3rem;
 }
-
+/*Interactive star rating input*/
 .star-input {
     font-size: 2.5rem;
     color: #ddd;
     cursor: pointer;
     transition: color 0.2s;
 }
-
+/*Star hover and active states*/
 .star-input:hover,
 .star-input.active {
     color: var(--pao-gold);
 }
-
+/*Individual rating card*/
 .review-card {
     background: white;
     border-radius: 15px;

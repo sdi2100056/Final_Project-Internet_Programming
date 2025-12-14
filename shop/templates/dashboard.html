@@ -1,18 +1,20 @@
-{% extends 'base.html' %}
+{% extends 'base.html' %} <!-- Extends base template and inherits navbar and footer-->
 {% block content %}
 <div class="container my-5">
     <h1><i class="fas fa-tachometer-alt"></i> Dashboard</h1>
-    
+    <!--Stat card 1 about recent views-->
     <div class="row g-4 mb-4">
         <div class="col-md-3">
             <div class="card text-center">
                 <div class="card-body">
                     <i class="fas fa-eye fa-3x text-primary mb-3"></i>
+                      <!--Dynami view from django context-->
                     <h5>{{ recent_views.count }}</h5>
-                    <p>Views</p>
+                    <p>Views</p><!--Label-->
                 </div>
             </div>
         </div>
+        <!--Stat card 2 for whishlists-->
         <div class="col-md-3">
             <div class="card text-center">
                 <div class="card-body">
@@ -22,6 +24,7 @@
                 </div>
             </div>
         </div>
+        <!--Stat card 3 for recent ratings-->
         <div class="col-md-3">
             <div class="card text-center">
                 <div class="card-body">
@@ -31,6 +34,7 @@
                 </div>
             </div>
         </div>
+        <!-- Stat card 4 for recent orders-->
         <div class="col-md-3">
             <div class="card text-center">
                 <div class="card-body">
@@ -47,8 +51,11 @@
             <div class="card">
                 <div class="card-body">
                     <h5><i class="fas fa-history"></i> Recent Views</h5>
+                <!--Loop for recent views-->
                     {% for view in recent_views %}
+                        <!--Display product name and time since viewed-->
                     <p>{{ view.product.name }} - {{ view.viewed_at|timesince }} πριν</p>
+                        <!--Empty state if no views-->
                     {% empty %}
                     <p class="text-muted">No views yet</p>
                     {% endfor %}
@@ -60,7 +67,9 @@
             <div class="card">
                 <div class="card-body">
                     <h5><i class="fas fa-box"></i> Orders</h5>
+                <!--Loop for recent orders-->
                     {% for order in recent_orders %}
+                        <!-- Display order id, total amount and readable status-->
                     <p>#{{ order.id }} - €{{ order.total }} - {{ order.get_status_display }}</p>
                     {% empty %}
                     <p class="text-muted">You do not have orders</p>

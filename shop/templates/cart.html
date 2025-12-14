@@ -1,36 +1,44 @@
-{% extends 'base.html' %}
+{% extends 'base.html' %}<!--Extends base and inherits navbar,footer-->
 {% load static %}
-
+<!--Conytent that will be inserted into base main area-->
 {% block content %}
 <link rel="stylesheet" href="{% static 'css/cart.css' %}">
 
 <div class="container my-5">
     <h1><i class="fas fa-shopping-cart"></i> My Cart</h1>
+<!--Check if cart has items-->
     {% if cart.items.all %}
     <div class="row">
         <div class="col-md-8" id="cart-items">
+        <!--loop for each item in the cart-->
             {% for item in cart.items.all %}
             <div class="card mb-3" id="item-{{ item.id }}">
                 <div class="card-body">
+                    <!--Product Name-->
                     <h5>{{ item.product.name }}</h5>
                     <p>Quantity: {{ item.quantity }} | €{{ item.product.price }} × {{ item.quantity }} = €<span class="item-subtotal">{{ item.get_subtotal }}</span></p>
+                    <!-- Remove button with onclick event calling js function-->
                     <button class="btn btn-danger btn-sm" onclick="removeFromCart({{ item.id }})"><i class="fas fa-trash"></i> Remove</button>
                 </div>
             </div>
-            {% endfor %}
+            {% endfor %} <!--End loop for cart items-->
         </div>
         <div class="col-md-4">
             <div class="card">
                 <div class="card-body">
                     <h5>Summary</h5>
+                    <!-- Dynamic cart item count-->
                     <p>Products: <span id="cart-count">{{ cart.get_items_count }}</span></p>
+                    <!--Dynamic cart total price-->
                     <h4>Total: €<span id="cart-total">{{ cart.get_total }}</span></h4>
+                    <!--Checkout button linking to checkout page-->
                     <a href="{% url 'checkout' %}" class="btn btn-pao w-100">Complete</a>
                 </div>
             </div>
         </div>
     </div>
     {% else %}
+        <!--Message for empty cart-->
     <div class="alert alert-info">The cart is empty!</div>
     {% endif %}
 </div>

@@ -1,13 +1,14 @@
-{% extends 'base.html' %}
+{% extends 'base.html' %}<!--Extends base template and inherits navabr and footer-->
 {% block content %}
 <div class="container my-5">
     <h1><i class="fas fa-credit-card"></i> Checkout Completion</h1>
-    <div class="card">
+    <div class="card"><!--Creates a bordered container with padding-->
         <div class="card-body">
+            <!--Display total amount from cart-->
             <h5>Total: €{{ cart.get_total }}</h5>
-            <form method="POST">
-                {% csrf_token %}
-                <button type="submit" class="btn btn-pao btn-lg">Confirm</button>
+            <form method="POST"><!--Method=POST for secure data transmission-->
+                {% csrf_token %}<!--CSFR token for django security is required for post forms-->
+                <button type="submit" class="btn btn-pao btn-lg">Confirm</button><!--Submit button for confirmation of purchase-->
             </form>
         </div>
     </div>

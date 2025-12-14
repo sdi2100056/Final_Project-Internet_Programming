@@ -1,19 +1,24 @@
-{% extends 'base.html' %}
+{% extends 'base.html' %}<!--extends base template and inherits navbar and footer-->
 {% load static %}
 
 {% block content %}
 <link rel="stylesheet" href="{% static 'css/login.css' %}">
-
+<!--Main login container with custom class for styling-->
 <div class="login-container">
     <div class="login-card">
+        <!--Login header section-->
         <div class="login-header">
             <i class="fas fa-sign-in-alt"></i>
             <h2>Login</h2>
         </div>
+        <!--Login from body-->
         <div class="login-body">
+            <!--Post form for login submission-->
             <form method="POST">
+                <!--CSFR token for django security-->
                 {% csrf_token %}
 
+                <!--username input field-->
                 <div class="mb-4">
                     <label class="form-label">
                         <i class="fas fa-user me-2"></i>User Name
@@ -23,12 +28,13 @@
                     </div>
                 </div>
 
+                <!--Password input field-->
                 <div class="mb-4">
                     <label class="form-label">
                         <i class="fas fa-lock me-2"></i>Password
                     </label>
                     <div class="input-group-icon has-toggle" style="position: relative;">
-                        <input type="password" class="form-control" name="password" id="password" placeholder="Enter the password" required>
+                        <input type="password" class="form-control" name="password" id="password" placeholder="Enter the password" required><!--id for js targeting -->
                     </div>
                 </div>
 
@@ -41,6 +47,7 @@
                 <span>or</span>
             </div>
 
+            <!--Registration for new users-->
             <div class="register-link">
                 New User; <a href="{% url 'register' %}">Register</a>
             </div>

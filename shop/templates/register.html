@@ -1,249 +1,14 @@
-{% extends 'base.html' %}
+{% extends 'base.html' %}<!--extends base template-->
+{% load static %}
 
-{% block title %}Εγγραφή - Παναθηναϊκός Fan Shop{% endblock %}
+{% block title %}Register Panathinaikos E-Shop{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/register.css' %}">
+{% endblock %}
 
 {% block content %}
-<style>
-    .register-container {
-        min-height: 80vh;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 2rem 0;
-    }
-
-    .register-card {
-        background: white;
-        border-radius: 30px;
-        box-shadow: 0 20px 60px rgba(0, 165, 80, 0.15);
-        overflow: hidden;
-        border: none;
-        max-width: 600px;
-        width: 100%;
-        animation: fadeInUp 0.6s ease;
-    }
-
-    @keyframes fadeInUp {
-        from {
-            opacity: 0;
-            transform: translateY(30px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-
-    .register-header {
-        background: linear-gradient(135deg, var(--pao-green) 0%, var(--pao-dark-green) 100%);
-        color: white;
-        padding: 2.5rem 2rem;
-        text-align: center;
-        position: relative;
-        overflow: hidden;
-    }
-
-    .register-header::before {
-        content: '';
-        position: absolute;
-        width: 200px;
-        height: 200px;
-        background: rgba(255,255,255,0.1);
-        border-radius: 50%;
-        top: -100px;
-        right: -100px;
-    }
-
-    .register-header::after {
-        content: '';
-        position: absolute;
-        width: 150px;
-        height: 150px;
-        background: rgba(255,255,255,0.05);
-        border-radius: 50%;
-        bottom: -75px;
-        left: -75px;
-    }
-
-    .register-header h2 {
-        font-size: 2.2rem;
-        font-weight: 700;
-        margin: 0;
-        position: relative;
-        z-index: 1;
-    }
-
-    .register-header i {
-        font-size: 2.5rem;
-        margin-bottom: 0.8rem;
-        display: block;
-        animation: bounce 2s infinite;
-    }
-
-    @keyframes bounce {
-        0%, 100% { transform: translateY(0); }
-        50% { transform: translateY(-10px); }
-    }
-
-    .register-body {
-        padding: 2.5rem 2.5rem;
-    }
-
-    .form-label {
-        font-weight: 600;
-        color: #2c3e50;
-        margin-bottom: 0.5rem;
-        font-size: 0.95rem;
-    }
-
-    .form-control, .form-select {
-        border: 2px solid #e0e0e0;
-        border-radius: 15px;
-        padding: 0.9rem 1.2rem;
-        font-size: 1rem;
-        transition: all 0.3s ease;
-    }
-
-    .form-control:focus, .form-select:focus {
-        border-color: var(--pao-green);
-        box-shadow: 0 0 0 0.2rem rgba(0, 165, 80, 0.15);
-        transform: translateY(-2px);
-    }
-
-    .input-group-icon {
-        position: relative;
-    }
-
-    .input-group-icon i {
-        position: absolute;
-        left: 1rem;
-        top: 50%;
-        transform: translateY(-50%);
-        color: #6c757d;
-        font-size: 1.1rem;
-        z-index: 10;
-    }
-
-    .input-group-icon .form-control {
-        padding-left: 3rem;
-    }
-
-    .btn-register {
-        background: linear-gradient(135deg, var(--pao-green), var(--pao-light-green));
-        border: none;
-        color: white;
-        font-weight: 600;
-        padding: 1rem;
-        border-radius: 15px;
-        font-size: 1.1rem;
-        box-shadow: 0 4px 15px rgba(0, 165, 80, 0.4);
-        transition: all 0.3s ease;
-        position: relative;
-        overflow: hidden;
-    }
-
-    .btn-register::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: -100%;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-        transition: left 0.5s;
-    }
-
-    .btn-register:hover::before {
-        left: 100%;
-    }
-
-    .btn-register:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 6px 25px rgba(0, 165, 80, 0.6);
-        background: linear-gradient(135deg, var(--pao-light-green), var(--pao-green));
-    }
-
-    .divider {
-        text-align: center;
-        margin: 1.5rem 0;
-        position: relative;
-    }
-
-    .divider::before {
-        content: '';
-        position: absolute;
-        left: 0;
-        top: 50%;
-        width: 100%;
-        height: 1px;
-        background: #e0e0e0;
-    }
-
-    .divider span {
-        background: white;
-        padding: 0 1rem;
-        position: relative;
-        color: #6c757d;
-        font-size: 0.9rem;
-    }
-
-    .login-link {
-        text-align: center;
-        font-size: 1rem;
-        color: #6c757d;
-    }
-
-    .login-link a {
-        color: var(--pao-green);
-        text-decoration: none;
-        font-weight: 600;
-        transition: all 0.3s ease;
-    }
-
-    .login-link a:hover {
-        color: var(--pao-dark-green);
-        text-decoration: underline;
-    }
-
-    .password-toggle {
-        position: absolute;
-        right: 1rem;
-        top: 50%;
-        transform: translateY(-50%);
-        cursor: pointer;
-        color: #6c757d;
-        z-index: 10;
-        transition: color 0.3s;
-    }
-
-    .password-toggle:hover {
-        color: var(--pao-green);
-    }
-
-    .input-group-icon.has-toggle .form-control {
-        padding-left: 3rem;
-        padding-right: 3rem;
-    }
-
-    .help-text {
-        font-size: 0.85rem;
-        color: #6c757d;
-        margin-top: 0.3rem;
-    }
-
-    .errorlist {
-        list-style: none;
-        padding: 0;
-        margin: 0.5rem 0 0 0;
-    }
-
-    .errorlist li {
-        color: #dc3545;
-        font-size: 0.85rem;
-        margin-top: 0.25rem;
-    }
-</style>
-
+    <!--Main registration container-->
 <div class="register-container">
     <div class="register-card">
         <div class="register-header">
@@ -251,9 +16,11 @@
             <h2>Register for new user</h2>
         </div>
         <div class="register-body">
+        <!--POST form for user registration-->
             <form method="POST">
-                {% csrf_token %}
+                {% csrf_token %}<!--CSRF protection token-->
 
+            <!--First row for user and email-->
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label class="form-label">
@@ -263,6 +30,7 @@
                             <i class="fas fa-user"></i>
                             {{ form.username }}
                         </div>
+                    <!--Error display for username-->
                         {% if form.username.errors %}
                             <ul class="errorlist">
                                 {% for error in form.username.errors %}
@@ -270,19 +38,22 @@
                                 {% endfor %}
                             </ul>
                         {% endif %}
+                    <!--Help text display for username-->
                         {% if form.username.help_text %}
                             <div class="help-text">{{ form.username.help_text }}</div>
                         {% endif %}
                     </div>
 
+                <!--Email field-->
                     <div class="col-md-6 mb-3">
                         <label class="form-label">
                             <i class="fas fa-envelope me-2"></i>Email
                         </label>
                         <div class="input-group-icon">
                             <i class="fas fa-envelope"></i>
-                            {{ form.email }}
+                            {{ form.email }}<!--Django form field-->
                         </div>
+                    <!--Error display for email-->
                         {% if form.email.errors %}
                             <ul class="errorlist">
                                 {% for error in form.email.errors %}
@@ -293,6 +64,7 @@
                     </div>
                 </div>
 
+            <!--Second row for first name and lst name-->
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label class="form-label">
@@ -313,7 +85,7 @@
 
                     <div class="col-md-6 mb-3">
                         <label class="form-label">
-                            <i class="fas fa-id-card me-2"></i>Surname
+                            <i class="fas fa-id-card me-2"></i>Surname <!--ID card icon-->
                         </label>
                         <div class="input-group-icon">
                             <i class="fas fa-id-card"></i>
@@ -329,6 +101,7 @@
                     </div>
                 </div>
 
+            <!--Password field-->
                 <div class="mb-3">
                     <label class="form-label">
                         <i class="fas fa-lock me-2"></i>Password
@@ -349,6 +122,7 @@
                     {% endif %}
                 </div>
 
+            <!--Password Confirmation-->
                 <div class="mb-4">
                     <label class="form-label">
                         <i class="fas fa-lock me-2"></i>Password Confirmation
@@ -356,7 +130,6 @@
                     <div class="input-group-icon has-toggle" style="position: relative;">
                         <i class="fas fa-lock"></i>
                         {{ form.password2 }}
-
                     </div>
                     {% if form.password2.errors %}
                         <ul class="errorlist">
@@ -370,45 +143,25 @@
                     {% endif %}
                 </div>
 
+            <!--Registration submit button-->
                 <button type="submit" class="btn btn-register w-100">
                     <i class="fas fa-user-plus me-2"></i>Register
                 </button>
             </form>
 
             <div class="divider">
-                <span>ή</span>
+                <span>or</span>
             </div>
 
+        <!--Login link for existing users-->
             <div class="login-link">
                Do you already have an account; <a href="{% url 'login' %}">Login Here</a>
             </div>
         </div>
     </div>
 </div>
+{% endblock %}
 
-<script>
-function togglePassword(fieldId) {
-    const passwordInput = document.getElementById('id_' + fieldId);
-    const toggleIcon = document.getElementById('toggle' + fieldId.charAt(0).toUpperCase() + fieldId.slice(1));
-
-    if (passwordInput.type === 'password') {
-        passwordInput.type = 'text';
-        toggleIcon.classList.remove('fa-eye');
-        toggleIcon.classList.add('fa-eye-slash');
-    } else {
-        passwordInput.type = 'password';
-        toggleIcon.classList.remove('fa-eye-slash');
-        toggleIcon.classList.add('fa-eye');
-    }
-}
-
-// Add form-control class to all form fields and remove placeholders
-document.addEventListener('DOMContentLoaded', function() {
-    const inputs = document.querySelectorAll('input[type="text"], input[type="email"], input[type="password"]');
-    inputs.forEach(input => {
-        input.classList.add('form-control');
-        input.removeAttribute('placeholder');
-    });
-});
-</script>
+{% block extra_js %}
+<script src="{% static 'js/register.js' %}"></script>
 {% endblock %}
