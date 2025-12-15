@@ -1,6 +1,3 @@
-"""
-ΟΔΗΓΙΕΣ: Αντικατέστησε ΟΛΟ το περιεχόμενο του shop/models.py με αυτό
-"""
 
 from django.db import models
 from django.contrib.auth.models import User
@@ -9,7 +6,7 @@ from django.utils.text import slugify
 
 
 class Category(models.Model):
-    """Κατηγορίες προϊόντων (π.χ. Ένδυση, Αξεσουάρ)"""
+    """Products' categories"""
     name = models.CharField(max_length=100, unique=True)
     slug = models.SlugField(max_length=100, unique=True, blank=True)
     description = models.TextField(blank=True)
@@ -29,7 +26,7 @@ class Category(models.Model):
 
 
 class Product(models.Model):
-    """Προϊόντα του καταστήματος"""
+    """Products"""
     SIZE_CHOICES = [
         ('XS', 'Extra Small'),
         ('S', 'Small'),
@@ -83,20 +80,20 @@ class Product(models.Model):
         return self.name
 
     def average_rating(self):
-        """Μέσος όρος rating"""
+        """AVG rating"""
         ratings = self.ratings.all()
         if ratings:
             return sum([r.rating for r in ratings]) / len(ratings)
         return 0
 
     def increment_views(self):
-        """Αύξηση προβολών"""
+        """Increase of views"""
         Product.objects.filter(id=self.id).update(views=models.F('views') + 1)
         self.refresh_from_db()
 
 
 class UserProfile(models.Model):
-    """Προφίλ χρήστη"""
+    """User profile"""
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
     phone = models.CharField(max_length=20, blank=True)
     address = models.TextField(blank=True)
@@ -109,7 +106,7 @@ class UserProfile(models.Model):
 
 
 class Rating(models.Model):
-    """Αξιολογήσεις προϊόντων"""
+    """Products rating"""
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='ratings')
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     rating = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)])
@@ -125,7 +122,7 @@ class Rating(models.Model):
 
 
 class Cart(models.Model):
-    """Καλάθι αγορών"""
+    """Cart"""
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='cart')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -134,16 +131,16 @@ class Cart(models.Model):
         return f"Cart {self.id} - {self.user.username}"
 
     def get_total(self):
-        """Υπολογισμός συνόλου"""
+        """Total"""
         return sum([item.get_subtotal() for item in self.items.all()])
 
     def get_items_count(self):
-        """Πλήθος προϊόντων"""
+        """Quantity of products"""
         return sum([item.quantity for item in self.items.all()])
 
 
 class CartItem(models.Model):
-    """Προϊόντα στο καλάθι"""
+    """Products to cart"""
     cart = models.ForeignKey(Cart, on_delete=models.CASCADE, related_name='items')
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField(default=1)
@@ -155,12 +152,11 @@ class CartItem(models.Model):
         return f"{self.quantity}x {self.product.name}"
 
     def get_subtotal(self):
-        """Υποσύνολο"""
         return self.product.price * self.quantity
 
 
 class Wishlist(models.Model):
-    """Λίστα επιθυμιών"""
+    """Wishlist"""
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='wishlist')
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     added_at = models.DateTimeField(auto_now_add=True)
@@ -174,7 +170,7 @@ class Wishlist(models.Model):
 
 
 class ViewHistory(models.Model):
-    """Ιστορικό προβολών"""
+    """Views history"""
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='view_history')
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     viewed_at = models.DateTimeField(auto_now_add=True)
@@ -187,13 +183,13 @@ class ViewHistory(models.Model):
 
 
 class Order(models.Model):
-    """Παραγγελίες"""
+    """Orders"""
     STATUS_CHOICES = [
-        ('PENDING', 'Εκκρεμής'),
-        ('PROCESSING', 'Επεξεργασία'),
-        ('SHIPPED', 'Απεστάλη'),
-        ('DELIVERED', 'Παραδόθηκε'),
-        ('CANCELLED', 'Ακυρώθηκε'),
+        ('PENDING', 'Pending'),
+        ('PROCESSING', 'Edit'),
+        ('SHIPPED', 'Sent'),
+        ('DELIVERED', 'Delivered'),
+        ('CANCELLED', 'Canceled'),
     ]
 
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='orders')
@@ -211,7 +207,7 @@ class Order(models.Model):
 
 
 class OrderItem(models.Model):
-    """Προϊόντα παραγγελίας"""
+    """Products of order"""
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='items')
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField(default=1)

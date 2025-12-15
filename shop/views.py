@@ -13,7 +13,7 @@ from .forms import UserRegisterForm, UserProfileForm, ProductFilterForm
 
 
 def home(request):
-    """Αρχική σελίδα"""
+    """Home Page"""
     context = {
         'featured_products': Product.objects.filter(is_active=True).order_by('-created_at')[:8],
         'categories': Category.objects.filter(parent=None),
@@ -22,11 +22,11 @@ def home(request):
 
 
 def product_list(request):
-    """Λίστα προϊόντων με φίλτρα"""
+    """Products List with filters"""
     products = Product.objects.filter(is_active=True)
     form = ProductFilterForm(request.GET)
 
-    # Αναζήτηση
+    # Search
     search_query = request.GET.get('search', '').strip()
     if search_query:
         products = products.filter(
@@ -35,7 +35,7 @@ def product_list(request):
             Q(color__icontains=search_query)
         )
 
-    # Φίλτρα
+    # Filters
     category_id = request.GET.get('category', '').strip()
     if category_id:
         products = products.filter(category_id=category_id)
@@ -70,7 +70,7 @@ def product_list(request):
     if color:
         products = products.filter(color__icontains=color)
 
-    # Ταξινόμηση
+    # Sorting
     sort_by = request.GET.get('sort_by', '').strip()
     if sort_by == 'price_asc':
         products = products.order_by('price')
@@ -99,7 +99,7 @@ def product_list(request):
 
 
 def product_detail(request, slug):
-    """Λεπτομέρειες προϊόντος"""
+    """Product Details"""
     product = get_object_or_404(Product, slug=slug, is_active=True)
     product.increment_views()
 
@@ -125,7 +125,7 @@ def product_detail(request, slug):
 
 
 def register(request):
-    """Εγγραφή χρήστη"""
+    """User registration"""
     if request.user.is_authenticated:
         return redirect('home')
 
@@ -144,7 +144,7 @@ def register(request):
 
 
 def user_login(request):
-    """Σύνδεση"""
+    """Login"""
     if request.user.is_authenticated:
         return redirect('home')
 
@@ -164,7 +164,7 @@ def user_login(request):
 
 
 def user_logout(request):
-    """Αποσύνδεση"""
+    """LogOut"""
     logout(request)
     messages.success(request, 'You have been logged out successfully!')
     return redirect('home')
@@ -172,7 +172,7 @@ def user_logout(request):
 
 @login_required
 def profile(request):
-    """Προφίλ χρήστη"""
+    """User Profile"""
     profile, created = UserProfile.objects.get_or_create(user=request.user)
 
     if request.method == 'POST':
@@ -193,7 +193,7 @@ def profile(request):
 
 @login_required
 def dashboard(request):
-    """Dashboard χρήστη"""
+    """Dashboard """
     context = {
         'recent_views': ViewHistory.objects.filter(user=request.user).select_related('product')[:10],
         'wishlist': Wishlist.objects.filter(user=request.user).select_related('product')[:10],
@@ -205,14 +205,14 @@ def dashboard(request):
 
 @login_required
 def cart_view(request):
-    """Καλάθι"""
+    """Cart"""
     cart, created = Cart.objects.get_or_create(user=request.user)
     return render(request, 'cart.html', {'cart': cart})
 
 
 @csrf_exempt
 def add_to_cart(request, product_id):
-    """Προσθήκη στο καλάθι - ΔΙΟΡΘΩΜΕΝΟ"""
+    """Add to cart"""
     # Manual έλεγχος αν είναι logged in
     if not request.user.is_authenticated:
         if request.method == 'POST':
@@ -247,7 +247,7 @@ def add_to_cart(request, product_id):
 @csrf_exempt
 @login_required
 def update_cart(request, item_id):
-    """Ενημέρωση ποσότητας στο καλάθι (AJAX)"""
+    """Update to cart"""
     if request.method != 'POST':
         return JsonResponse({'success': False, 'message': 'Invalid request'}, status=400)
 
@@ -271,7 +271,7 @@ def update_cart(request, item_id):
 @csrf_exempt
 @login_required
 def remove_from_cart(request, item_id):
-    """Αφαίρεση από καλάθι (AJAX)"""
+    """Remove from cart"""
     if request.method != 'POST':
         return JsonResponse({'success': False, 'message': 'Invalid request'}, status=400)
 
@@ -297,14 +297,14 @@ def checkout(request):
         return redirect('cart')
 
     if request.method == 'POST':
-        # Δημιουργία παραγγελίας
+        # Order creation
         order = Order.objects.create(
             user=request.user,
             total=cart.get_total(),
             shipping_address=f"{request.user.profile.address}, {request.user.profile.city}"
         )
 
-        # Δημιουργία order items
+        # Creation of order items
         for item in cart.items.all():
             OrderItem.objects.create(
                 order=order,
@@ -313,7 +313,7 @@ def checkout(request):
                 price=item.product.price
             )
 
-        # Καθαρισμός καλαθιού
+        # Clear of cart
         cart.items.all().delete()
 
         messages.success(request, f'Order #{order.id} completed successfully!')
@@ -325,7 +325,7 @@ def checkout(request):
 @csrf_exempt
 @login_required
 def add_rating(request, product_id):
-    """Προσθήκη rating (AJAX)"""
+    """Add rating """
     if request.method != 'POST':
         return JsonResponse({'success': False, 'message': 'Invalid request'}, status=400)
 
@@ -353,7 +353,7 @@ def add_rating(request, product_id):
 @csrf_exempt
 @login_required
 def toggle_wishlist(request, product_id):
-    """Toggle wishlist (AJAX)"""
+    """Toggle wishlist """
     if request.method != 'POST':
         return JsonResponse({'success': False, 'message': 'Invalid request'}, status=400)
 
